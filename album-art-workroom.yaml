@@ -1,0 +1,191 @@
+esphome:
+  name: album-art-workroom
+  friendly_name: Album Art - Workroom
+
+esp32:
+  board: lolin_s2_mini
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+# Allow Over-The-Air updates
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+
+#********************************************
+
+
+# substitutions:
+#   device_name: album-art-workroom
+#   device_friendly_name: Album Art - Workroom
+#   board: lolin_s2_mini
+#   device_variant: ESP32S2
+#   framework: arduino
+#   flash_size: 4MB
+#   album_art_url_sensor: sensor.album_art_workroom_url
+#   ha_hostname: homeassistant.local:8123 # Home Assistant hostname and port
+#   api_encryption_key: !secret album-art-workroom-key
+#   psram_mode: quad
+#   psram_speed: 40MHz
+
+# esphome:
+#   name: ${device_name}
+#   friendly_name: ${device_friendly_name}
+
+#   # on_boot:
+#   #   - lambda: id(my_ota).set_auth_password("NEW OTA PASSWORD HERE");
+
+# esp32:
+#   board: ${board}
+#   variant: ${device_variant}
+#   flash_size: ${flash_size}
+#   framework:
+#     type: ${framework}
+
+# # Enable logging
+# logger:
+
+# # Enable Home Assistant API
+# api:
+#   encryption:
+#     key: ${api_encryption_key}
+
+# ota:
+#   - platform: esphome
+#     id: my_ota
+#     password: !secret ota_password
+
+# wifi:
+#   ssid: !secret wifi_ssid
+#   password: !secret wifi_password
+
+#   # Enable fallback hotspot (captive portal) in case wifi connection fails
+#   ap:
+#     ssid: ${device_name}
+#     password: !secret ap_wifi_pw
+
+# web_server:
+#   port: 80
+
+#################### IMAGE URL PORTION ########################
+
+# text_sensor:
+#   - platform: homeassistant
+#     id: playing_track_artwork
+#     entity_id: ${album_art_url_sensor}
+#     on_value:
+#       then:
+#         - homeassistant.action:
+#             action: image_resizer.resize_image
+#             data:
+#               quality: "95"
+#               method: lanczos
+#               source: "{{ states('${album_art_url_sensor}') }}"
+#               width: "64"
+#               height: "64"
+#               keep_aspect_ratio: "False"
+#               format: JPEG
+#               destination: "/config/www/${device_name}.jpg"
+#         - delay: 5s
+#         - component.update: album_image
+
+# http_request:
+#   verify_ssl: false
+#   timeout: 10s
+#   useragent: ESPHome/Album-Art
+
+# online_image:
+#   - url: "http://${ha_hostname}/local/${device_name}.jpg"
+#     format: jpg
+#     id: album_image
+#     type: RGB
+#     update_interval: never # Only update when explicitly requested
+#     on_download_finished:
+#       then:
+#         - logger.log: "Image downloaded successfully"
+#         - component.update: album_artwork_display
+
+
+#################### DISPLAY PORTION FOR ESP32-S3 DEVKIT ########################
+
+# psram:
+#   mode: ${psram_mode}
+#   speed: ${psram_speed}
+
+# external_components:
+#   - source: github://TillFleisch/ESPHome-HUB75-MatrixDisplayWrapper@main
+
+# font:
+#   - file: "gfonts://Roboto"
+#     id: roboto
+#     size: 10
+
+# display:
+#   - platform: hub75_matrix_display
+#     id: album_artwork_display
+#     width: 64
+#     height: 64
+
+#     R1_pin: 1
+#     G1_pin: 40
+
+#     B1_pin: 2
+#     #gnd pin 38
+
+#     R2_pin: 4
+#     G2_pin: 36
+
+#     B2_pin: 6
+#     E_pin: 34
+
+#     A_pin: 8
+#     B_pin: 21
+
+#     C_pin: 10
+#     D_pin: 17
+
+#     CLK_pin: 13
+#     LAT_pin: 15
+
+#     OE_pin: 14
+#     #gnd pin soldered
+
+#     lambda: |-
+#       if (id(album_image).get_width() == 0 || id(album_image).get_height() == 0) {
+#         it.printf(2, 32, id(roboto), "No Album Art");
+#       }
+#       else {
+#         it.image(0, 0, id(album_image));
+#       }      
+
+# switch:
+#   - platform: gpio
+#     pin: 38
+#     id: gnd1
+#     internal: true
+#     restore_mode: ALWAYS_OFF
+    
+
+#   - platform: hub75_matrix_display
+#     matrix_id: album_artwork_display
+#     name: "${device_name} Power"
+#     id: power
+#     restore_mode: ALWAYS_ON
+
+# number:
+#   - platform: hub75_matrix_display
+#     matrix_id: album_artwork_display
+#     name: "${device_name} Brightness"
+#     id: brightness
+
+###############################################################

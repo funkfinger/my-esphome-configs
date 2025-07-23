@@ -1,0 +1,16 @@
+substitutions:
+  name: ratgdov25i-eec597
+  friendly_name: Garage Controller - Two Car
+packages:
+  ratgdo.esphome: github://ratgdo/esphome-ratgdo/v25iboard.yaml@main
+esphome:
+  name: ${name}
+  name_add_mac_suffix: false
+  friendly_name: ${friendly_name}
+api:
+  encryption:
+    key: !secret ratgdov25i-eec597-key
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password

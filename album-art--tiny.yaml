@@ -1,0 +1,110 @@
+substitutions:
+  device_name: album-art-tiny
+  device_friendly_name: Album Art - Tiny
+  url_sensor_name: album_art_workroom_url
+  device_board: esp32-s3-devkitc-1
+  device_variant: ESP32S3
+  ha_hostname: homeassistant.local
+
+
+esphome:
+  name: "${device_name}"
+  friendly_name: "${device_friendly_name}"
+
+esp32:
+  board: "${device_board}"
+  variant: "${device_variant}"
+  flash_size: 4MB
+  framework:
+    type: arduino
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+api:
+  encryption:
+    key: !secret "album-art-tiny-key"
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+# Enable logging
+logger:
+
+# Synchronize time with an NTP server
+time:
+  - platform: sntp
+    id: system_time
+    timezone: America/New_York  # Change to your timezone
+    on_time:
+      # Update display every minute
+      - seconds: 0
+        minutes: /1
+        then:
+          - component.update: my_display
+
+# Define fonts for the display
+font:
+  - file: "gfonts://Roboto"
+    id: font_small
+    size: 20
+  - file: "gfonts://Roboto"
+    id: font_medium
+    size: 36
+  - file: "gfonts://Roboto"
+    id: font_large
+    size: 48
+    # weight: bold
+
+# SPI configuration for the display
+# The Waveshare ESP32-S3-LCD-1.3 has a 1.3-inch LCD with 240x240 resolution
+spi:
+  clk_pin: 40
+  mosi_pin: 41
+  
+display:
+  - platform: ili9xxx
+    model: ST7789V
+    id: my_display
+    dimensions:
+      width: 240
+      height: 240
+    dc_pin: 38
+    reset_pin: 42
+    cs_pin: 39
+    invert_colors: true
+    rotation: 0°
+    update_interval: 5s
+    lambda: |-
+      // Clear the display with black color
+      it.fill(Color(0, 0, 0)); // Black
+      
+      // Get current time
+      auto time = id(system_time).now();
+      int hours = time.hour;
+      int minutes = time.minute;
+      int seconds = time.second;
+      
+      // Format time strings
+      char time_str[9];
+      sprintf(time_str, "%02d:%02d:%02d", hours, minutes, seconds);
+      
+      char date_str[11];
+      sprintf(date_str, "%04d-%02d-%02d", time.year, time.month, time.day_of_month);
+      
+      // Draw a nice border with blue color
+      it.rectangle(0, 0, it.get_width(), it.get_height(), Color(0, 0, 255)); // Blue
+      it.rectangle(2, 2, it.get_width() - 4, it.get_height() - 4, Color(0, 0, 255)); // Blue
+      
+      // Display time in large font with white color
+      it.print(it.get_width() / 2, 80, id(font_large), Color(255, 255, 255), TextAlign::CENTER, time_str); // White
+      
+      // Display date in medium font with yellow color
+      it.print(it.get_width() / 2, 140, id(font_medium), Color(255, 255, 0), TextAlign::CENTER, date_str); // Yellow
+      
+      // Display a title with green color
+      it.print(it.get_width() / 2, 30, id(font_small), Color(0, 255, 0), TextAlign::CENTER, "CURRENT TIME"); // Green
+

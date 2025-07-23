@@ -1,0 +1,80 @@
+substitutions:
+  name: "song-display"
+  friendly_name: Song Display
+  board: seeed_xiao_esp32c3
+  devicename: matrix7219
+  media_player: media_player.living_room
+  # Display pins
+  clock_pin: GPIO7 # D5 is connected to CLK of MAX7219
+  chip_select_pin: GPIO21 # D6 is connected to CS of MAX7219
+  data_in_pin: GPIO20 # D7 is connected to MOSI of MAX7219
+
+esphome:
+  name: ${name}
+  name_add_mac_suffix: false
+  friendly_name: ${friendly_name}
+
+api:
+  encryption:
+    key: !secret song-display-key
+
+esp32:
+  board: ${board}
+  framework:
+    type: arduino
+
+logger:
+  logs:
+    component: ERROR
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+ota:
+  - platform: esphome
+    id: my_ota
+    password: !secret ota_password
+
+spi:
+  clk_pin: ${clock_pin}
+  mosi_pin: ${data_in_pin}
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+    timezone: "America/Phoenix"
+
+text_sensor:
+  - platform: homeassistant
+    id: song_title
+    entity_id: ${media_player}
+    attribute: media_title
+  - platform: homeassistant
+    id: artist
+    entity_id: ${media_player}
+    attribute: media_artist
+  - platform: homeassistant
+    id: play_state
+    entity_id: ${media_player}
+
+display:
+  - platform: max7219digit
+    cs_pin: ${chip_select_pin}
+    num_chips: 4
+    intensity: 5
+    scroll_enable: True
+    scroll_speed: 40ms
+    scroll_delay: 0ms
+    scroll_dwell: 0ms
+    lambda: |-
+      if (id(play_state).state == "playing") {
+        it.printf(0, 0, id(digit_font), "  %s - %s  |  ", to_string(id(song_title).state).c_str(), to_string(id(artist).state).c_str());
+      } else {
+        it.strftime(0, 0, id(digit_font), "         %I:%M %p         %m/%d", id(homeassistant_time).now());
+      }
+
+font:
+  - file: "fonts/pixelmix.ttf"
+    id: digit_font
+    size: 8

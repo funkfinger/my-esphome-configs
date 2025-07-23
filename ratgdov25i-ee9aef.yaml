@@ -1,0 +1,17 @@
+substitutions:
+  name: ratgdov25i-ee9aef
+  friendly_name: Garage Controller - Guest Garage
+packages:
+  ratgdo.esphome: github://ratgdo/esphome-ratgdo/v25iboard.yaml@main
+esphome:
+  name: ${name}
+  name_add_mac_suffix: false
+  friendly_name: ${friendly_name}
+api:
+  encryption:
+    key: !secret garage-controller-guest-garage-key
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
