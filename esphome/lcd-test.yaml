@@ -1,0 +1,32 @@
+esphome:
+  name: lcd-test
+  friendly_name: LCD Test
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "L0IURtZTs9ZsLWOg5WNuUz25jXPIemH/KJZ6Y0QOInE="
+
+ota:
+  - platform: esphome
+    password: "6719debfb924fc84888255f3229ebe71"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Lcd-Test Fallback Hotspot"
+    password: "tboOxsMfLydi"
+
+captive_portal:
+    

@@ -1,13 +1,13 @@
 substitutions:
-  device_name: album-art-dining
-  device_friendly_name: Album Art - Dining
+  device_name: test-s3-mini
+  device_friendly_name: Test S3 Mini
   board: lolin_s2_mini
   device_variant: ESP32S2
   framework: arduino
   flash_size: 4MB
-  album_art_url_sensor: sensor.album_art_dining_url
+  album_art_url_sensor: sensor.album_art_workroom_url
   ha_hostname: homeassistant.local:8123 # Home Assistant hostname and port
-  api_encryption_key: !secret album-art-dining-key
+  api_encryption_key: !secret album-art-workroom-key
   psram_mode: quad
   psram_speed: 40MHz
 
