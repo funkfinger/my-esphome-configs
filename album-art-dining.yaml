@@ -1,3 +1,12 @@
+###################################################
+###                                             ###
+###     The current version of ESPHome          ###
+###     2025.7.0 DOES NOT WORK! I used          ###
+###     2025.5.0 and it works. Need             ###
+###     to look into why on ESP32-S2.           ###
+###                                             ###
+###################################################
+
 substitutions:
   device_name: album-art-dining
   device_friendly_name: Album Art - Dining

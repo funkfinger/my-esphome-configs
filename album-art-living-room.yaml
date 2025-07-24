@@ -6,6 +6,7 @@ substitutions:
   framework: arduino
   flash_size: 8MB
   album_art_url_sensor: sensor.album_art_living_url
+  api_encryption_key: !secret album-art-living-room-key
   ha_hostname: homeassistant.local:8123 # Home Assistant hostname and port
   psram_mode: octal
   psram_speed: 80MHz
@@ -31,7 +32,7 @@ logger:
 # Enable Home Assistant API
 api:
   encryption:
-    key: !secret led-hub-matrix-test-1-key
+    key: ${api_encryption_key}
 
 ota:
   - platform: esphome
@@ -87,7 +88,6 @@ online_image:
         - logger.log: "Image downloaded successfully"
         - component.update: album_artwork_display
 
-
 #################### DISPLAY PORTION FOR ESP32-S3 DEVKIT ########################
 
 psram:
@@ -95,7 +95,7 @@ psram:
   speed: ${psram_speed}
 
 external_components:
-  - source: github://TillFleisch/ESPHome-HUB75-MatrixDisplayWrapper@main
+  - source: github://funkfinger/ESPHome-HUB75-MatrixDisplayWrapper@fix-switch.SWITCH_SCHEMA-deprecation
 
 font:
   - file: "gfonts://Roboto"
@@ -139,7 +139,7 @@ display:
       }
       else {
         it.image(0, 0, id(album_image));
-      }      
+      }
 
 switch:
   - platform: gpio
@@ -147,7 +147,7 @@ switch:
     id: gnd1
     internal: true
     restore_mode: ALWAYS_OFF
-    
+
   - platform: gpio
     pin: 9
     id: gnd2
@@ -165,5 +165,4 @@ number:
     matrix_id: album_artwork_display
     name: "${device_name} Brightness"
     id: brightness
-
 ###############################################################

@@ -10,3 +10,5 @@
 # Backup files that might contain secrets
 *.bak
 *.backup
+
+.DS_Store
